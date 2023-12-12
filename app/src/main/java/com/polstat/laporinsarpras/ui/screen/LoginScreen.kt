@@ -1,5 +1,7 @@
 package com.polstat.laporinsarpras.ui.screen
 
+import LoginViewModel
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,44 +18,50 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.polstat.laporinsarpras.R
 import com.polstat.laporinsarpras.ui.state.EmailState
 import com.polstat.laporinsarpras.ui.state.PasswordState
 import com.polstat.laporinsarpras.ui.theme.Green
-import com.polstat.laporinsarpras.ui.theme.LaporinSarprasTheme
 import com.polstat.laporinsarpras.ui.theme.LightGray
 import com.polstat.laporinsarpras.ui.theme.Red
-import com.polstat.laporinsarpras.ui.theme.Typography
 import com.polstat.laporinsarpras.ui.theme.Typography.Roboto
 import com.polstat.laporinsarpras.ui.theme.Typography.body1
 import com.polstat.laporinsarpras.ui.theme.Typography.h1
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
 
 // Komponen UI
 @Composable
-fun LoginScreen() {
+fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {
     val emailState = remember { EmailState() }
     val passwordState = remember { PasswordState() }
+    val loginResponse by loginViewModel.loginResponse.observeAsState()
+    val showToast = remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -93,7 +101,23 @@ fun LoginScreen() {
                 Spacer(modifier = Modifier.height(5.dp))
                 PasswordTextField(passwordState)
                 Spacer(modifier = Modifier.height(15.dp))
-                LoginButton(emailState = emailState, passwordState = passwordState)
+                LoginButton(emailState, passwordState, loginViewModel) {
+                    loginResponse?.let {
+                        if (it.data != null){
+                            navController.navigate("success")
+                        } else {
+                            showToast.value = true
+//                       Toast.makeText(LocalContext.current, "${it.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                if (showToast.value) {
+                    Toast.makeText(LocalContext.current, "${loginResponse?.message}" + ": Email dan/atau password salah!", Toast.LENGTH_SHORT).show()
+                    showToast.value = false // Reset the state
+                }
+
+
+
             }
         }
     }
@@ -195,10 +219,18 @@ fun LoginTitle() {
 }
 
 @Composable
-fun LoginButton(emailState: EmailState, passwordState: PasswordState) {
+fun LoginButton(emailState: EmailState, passwordState: PasswordState, loginViewModel: LoginViewModel, onLoginClick: () -> Unit) {
     val isButtonEnabled = emailState.email.isNotEmpty() && passwordState.password.isNotEmpty()
+    val coroutineScope = rememberCoroutineScope()
     ElevatedButton(
-        onClick = { /* Handle login */ },
+        onClick = {
+            coroutineScope.launch {
+                loginViewModel.login(emailState.email, passwordState.password)
+                // Panggil lambda onLoginClick saat tombol diklik
+                delay(500)
+                onLoginClick.invoke()
+            }
+        },
         enabled = isButtonEnabled,
         modifier = Modifier
             .fillMaxWidth(0.85f),
@@ -210,7 +242,7 @@ fun LoginButton(emailState: EmailState, passwordState: PasswordState) {
     ) {
         Text(
             text = "Masuk",
-            fontFamily = Typography.Roboto,
+            fontFamily = Roboto,
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp
         )
@@ -250,16 +282,16 @@ fun LoginPicture(){
 //    }
 //}
 
-@Preview
-@Composable
-fun LoginScreenPreview() {
-    LaporinSarprasTheme {
-        // A surface container using the 'background' color from the theme
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            LoginScreen()
-        }
-    }
-}
+//@Preview
+//@Composable
+//fun LoginScreenPreview() {
+//    LaporinSarprasTheme {
+//        // A surface container using the 'background' color from the theme
+//        Surface(
+//            modifier = Modifier.fillMaxSize(),
+//            color = MaterialTheme.colorScheme.background
+//        ) {
+//            LoginScreen()
+//        }
+//    }
+//}
