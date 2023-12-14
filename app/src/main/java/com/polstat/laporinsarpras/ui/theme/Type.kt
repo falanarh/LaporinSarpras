@@ -5,48 +5,105 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.compose.material3.Typography
 import com.polstat.laporinsarpras.R
 
-object Typography {
-    // Ganti "FontFamilyName" dengan nama keluarga font Anda
-    val Roboto = FontFamily(
+//val Roboto = FontFamily(
+//    Font(R.font.roboto_light, FontWeight.Light),
+//    Font(R.font.roboto_regular, FontWeight.Normal),
+//    Font(R.font.roboto_medium, FontWeight.Medium),
+//    Font(R.font.roboto_bold, FontWeight.Bold),
+//    Font(R.font.roboto_black, FontWeight.Black)
+//)
+
+val Roboto = FontFamily(
+    listOf(
         Font(R.font.roboto_light, FontWeight.Light),
         Font(R.font.roboto_regular, FontWeight.Normal),
         Font(R.font.roboto_medium, FontWeight.Medium),
         Font(R.font.roboto_bold, FontWeight.Bold),
         Font(R.font.roboto_black, FontWeight.Black)
     )
+)
 
-    val h1 = TextStyle(
+val typography: Typography = Typography(
+    displayLarge = TextStyle(
         fontFamily = Roboto,
-        fontWeight = FontWeight.Black,
-        fontSize = 30.sp
-    )
-
-    val h2 = TextStyle(
+        fontWeight = FontWeight.Light,
+        fontSize = 96.sp
+    ),
+    displayMedium = TextStyle(
+        fontFamily = Roboto,
+        fontWeight = FontWeight.Light,
+        fontSize = 60.sp
+    ),
+    displaySmall = TextStyle(
+        fontFamily = Roboto,
+        fontWeight = FontWeight.Normal,
+        fontSize = 48.sp
+    ),
+    headlineLarge = TextStyle(
         fontFamily = Roboto,
         fontWeight = FontWeight.Bold,
-        fontSize = 24.sp
-    )
-
-    val subtitle1 = TextStyle(
+        fontSize = 34.sp
+    ),
+    headlineMedium = TextStyle(
+        fontFamily = Roboto,
+        fontWeight = FontWeight.Bold,
+        fontSize = 28.sp
+    ),
+    headlineSmall = TextStyle(
+        fontFamily = Roboto,
+        fontWeight = FontWeight.Bold,
+        fontSize = 20.sp
+    ),
+    titleLarge = TextStyle(
+        fontFamily = Roboto,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp
+    ),
+    titleMedium = TextStyle(
         fontFamily = Roboto,
         fontWeight = FontWeight.Medium,
+        fontSize = 14.sp
+    ),
+    titleSmall = TextStyle(
+        fontFamily = Roboto,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp
+    ),
+    bodyLarge = TextStyle(
+        fontFamily = Roboto,
+        fontWeight = FontWeight.Normal,
         fontSize = 16.sp
-    )
-
-    val body1 = TextStyle(
+    ),
+    bodyMedium = TextStyle(
         fontFamily = Roboto,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp
-    )
-
-    val caption = TextStyle(
+    ),
+    bodySmall = TextStyle(
         fontFamily = Roboto,
-        fontWeight = FontWeight.Light,
+        fontWeight = FontWeight.Normal,
         fontSize = 12.sp
+    ),
+    labelLarge = TextStyle(
+        fontFamily = Roboto,
+        fontWeight = FontWeight.Normal,
+        fontSize = 10.sp
+    ),
+    labelMedium = TextStyle(
+        fontFamily = Roboto,
+        fontWeight = FontWeight.Normal,
+        fontSize = 10.sp
+    ),
+    labelSmall = TextStyle(
+        fontFamily = Roboto,
+        fontWeight = FontWeight.Normal,
+        fontSize = 10.sp
     )
-}
+)
+
 
 
 // Set of Material typography styles to start with

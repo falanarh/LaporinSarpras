@@ -13,12 +13,21 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -27,6 +36,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -38,21 +48,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.polstat.laporinsarpras.R
+import com.polstat.laporinsarpras.api.ConfigurationApi
 import com.polstat.laporinsarpras.ui.state.EmailState
 import com.polstat.laporinsarpras.ui.state.PasswordState
 import com.polstat.laporinsarpras.ui.theme.Green
+import com.polstat.laporinsarpras.ui.theme.LaporinSarprasTheme
 import com.polstat.laporinsarpras.ui.theme.LightGray
 import com.polstat.laporinsarpras.ui.theme.Red
-import com.polstat.laporinsarpras.ui.theme.Typography.Roboto
-import com.polstat.laporinsarpras.ui.theme.Typography.body1
-import com.polstat.laporinsarpras.ui.theme.Typography.h1
+import com.polstat.laporinsarpras.ui.theme.Roboto
+import com.polstat.laporinsarpras.ui.theme.typography
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
 
 // Komponen UI
 @Composable
@@ -62,66 +75,66 @@ fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {
     val loginResponse by loginViewModel.loginResponse.observeAsState()
     val showToast = remember { mutableStateOf(false) }
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Green),
+            .background(
+                color = Green
+            ),
         verticalArrangement = Arrangement.Bottom
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxHeight(0.85f)
-                .fillMaxWidth()
-                .background(
-                    color = LightGray,
-                    shape = RoundedCornerShape(
-                        topStart = 50.dp,
-                        topEnd = 50.dp
-                    )
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.height(15.dp))
-            Row(
+        item {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth(0.2f)
-                    .height(8.dp)
+                    .fillMaxHeight(0.85f)
+                    .fillMaxWidth()
                     .background(
-                        color = Color.LightGray,
-                        shape = RoundedCornerShape(10.dp)
-                    )
-            ) {}
-            Column {
+                        color = LightGray,
+                        shape = RoundedCornerShape(
+                            topStart = 50.dp,
+                            topEnd = 50.dp
+                        )
+                    ),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Spacer(modifier = Modifier.height(15.dp))
-                LoginPicture()
-                Spacer(modifier = Modifier.height(15.dp))
-                LoginTitle()
-                Spacer(modifier = Modifier.height(15.dp))
-                EmailTextField(emailState)
-                Spacer(modifier = Modifier.height(5.dp))
-                PasswordTextField(passwordState)
-                Spacer(modifier = Modifier.height(15.dp))
-                LoginButton(emailState, passwordState, loginViewModel) {
-                    loginResponse?.let {
-                        if (it.data != null){
-                            navController.navigate("success")
-                        } else {
-                            showToast.value = true
-//                       Toast.makeText(LocalContext.current, "${it.message}", Toast.LENGTH_SHORT).show()
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(0.2f)
+                        .height(8.dp)
+                        .background(
+                            color = Color.LightGray,
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                ) {}
+                Column {
+                    Spacer(modifier = Modifier.height(15.dp))
+                    LoginPicture()
+                    Spacer(modifier = Modifier.height(15.dp))
+                    LoginTitle()
+                    Spacer(modifier = Modifier.height(15.dp))
+                    EmailTextField(emailState)
+                    Spacer(modifier = Modifier.height(5.dp))
+                    PasswordTextField(passwordState)
+                    Spacer(modifier = Modifier.height(15.dp))
+                    LoginButton(emailState, passwordState, loginViewModel) {
+                        loginResponse?.let {
+                            if (it.data != null){
+                                navController.navigate("success")
+                            } else {
+                                showToast.value = true
+                            }
                         }
                     }
+                    Spacer(modifier = Modifier.height(30.dp))
+                    if (showToast.value) {
+                        Toast.makeText(LocalContext.current, "${loginResponse?.message}" + ": Email dan/atau password salah!", Toast.LENGTH_SHORT).show()
+                        showToast.value = false // Reset the state
+                    }
                 }
-                if (showToast.value) {
-                    Toast.makeText(LocalContext.current, "${loginResponse?.message}" + ": Email dan/atau password salah!", Toast.LENGTH_SHORT).show()
-                    showToast.value = false // Reset the state
-                }
-
-
-
             }
         }
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -165,11 +178,7 @@ fun EmailTextField(emailState: EmailState) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PasswordTextField(passwordState: PasswordState) {
-    val focusRequester = remember { FocusRequester() }
-    DisposableEffect(Unit) {
-        focusRequester.requestFocus()
-        onDispose { }
-    }
+    val showPassword = rememberSaveable { mutableStateOf(false) }
     OutlinedTextField(
         value = passwordState.password,
         onValueChange = {
@@ -186,11 +195,33 @@ fun PasswordTextField(passwordState: PasswordState) {
         isError = !passwordState.isPasswordValid,
         modifier = Modifier
             .fillMaxWidth(0.85f)
-            .focusRequester(focusRequester)
             .onFocusChanged { passwordState.isPasswordFocused = it.isFocused },
-        visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        maxLines = 1
+        maxLines = 1,
+        trailingIcon = {
+            if (showPassword.value) {
+                IconButton(onClick = { showPassword.value = false }) {
+                    Icon(
+                        imageVector = Icons.Filled.Visibility,
+                        contentDescription = "Hide Password",
+                        modifier = Modifier.size(15.dp)
+                    )
+                }
+            } else {
+                IconButton(onClick = { showPassword.value = true }) {
+                    Icon(
+                        imageVector = Icons.Filled.VisibilityOff,
+                        contentDescription = "Show Password",
+                        modifier = Modifier.size(15.dp)
+                    )
+                }
+            }
+        },
+        visualTransformation = if (showPassword.value) {
+            VisualTransformation.None
+        } else {
+            PasswordVisualTransformation()
+        }
     )
     if (!passwordState.isPasswordValid && !passwordState.isPasswordFocused) {
         Text(
@@ -208,12 +239,13 @@ fun LoginTitle() {
         Text(
             text = "LaporinSarpras.",
             color = Color.Black,
-            style = h1
+            style = typography.headlineMedium
         )
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "Masuk dan buat aduan mengenai permasalahan\nsarana dan prasarana kelas",
             color = Color.Gray,
-            style = body1
+            style = typography.bodyMedium
         )
     }
 }
@@ -282,16 +314,19 @@ fun LoginPicture(){
 //    }
 //}
 
-//@Preview
-//@Composable
-//fun LoginScreenPreview() {
-//    LaporinSarprasTheme {
-//        // A surface container using the 'background' color from the theme
-//        Surface(
-//            modifier = Modifier.fillMaxSize(),
-//            color = MaterialTheme.colorScheme.background
-//        ) {
-//            LoginScreen()
-//        }
-//    }
-//}
+@Preview
+@Composable
+fun LoginScreenPreview() {
+    LaporinSarprasTheme {
+        // A surface container using the 'background' color from the theme
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            val configurationApi = ConfigurationApi()
+            val loginViewModel = LoginViewModel(configurationApi.apiService)
+            val navController = rememberNavController()
+            LoginScreen(loginViewModel, navController)
+        }
+    }
+}

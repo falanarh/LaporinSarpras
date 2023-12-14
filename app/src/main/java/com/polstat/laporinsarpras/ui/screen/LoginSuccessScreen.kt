@@ -12,7 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.polstat.laporinsarpras.ui.theme.Typography.Roboto
+import com.polstat.laporinsarpras.ui.theme.Roboto
+
 
 @Composable
 fun LoginSuccessScreen(loginViewModel: LoginViewModel, navController: NavController) {

@@ -7,7 +7,7 @@ class ConfigurationApi {
     // Koneksi ke API menggunakan Retrofit
     val apiService: ApiService by lazy {
         Retrofit.Builder()
-            .baseUrl("http://192.168.56.1:2912/")
+            .baseUrl("http://192.168.1.80:2912/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiService::class.java)
