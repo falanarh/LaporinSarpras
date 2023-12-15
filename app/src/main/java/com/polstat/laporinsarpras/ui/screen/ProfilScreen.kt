@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
@@ -17,10 +18,15 @@ import com.polstat.laporinsarpras.ui.theme.LaporinSarprasTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfilScreen(navController: NavController) {
+    val currentScreen= mutableStateOf<Screen>(Screen.Profil)
+
     Scaffold (
         topBar = {},
         bottomBar = {
-            CustomBottomNavigation(navController = navController, currentScreenId = Screen.Profil.id) {}
+            CustomBottomNavigation(navController = navController, currentScreenId = Screen.Profil.id) {
+                currentScreen.value = it
+                navController.navigate(it.id)
+            }
         },
     ) {innerPadding->
         Column(

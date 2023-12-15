@@ -119,7 +119,7 @@ fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {
                     LoginButton(emailState, passwordState, loginViewModel) {
                         loginResponse?.let {
                             if (it.data != null){
-                                navController.navigate("success")
+                                navController.navigate("beranda")
                             } else {
                                 showToast.value = true
                             }

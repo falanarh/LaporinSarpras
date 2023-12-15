@@ -11,13 +11,13 @@ import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotifikasiScreen(navController: NavController){
+fun AsetScreen(navController: NavController){
     val currentScreen= mutableStateOf<Screen>(Screen.Beranda)
 
     Scaffold (
         topBar = {},
         bottomBar = {
-            CustomBottomNavigation(navController = navController, currentScreenId = Screen.Notifikasi.id){
+            CustomBottomNavigation(navController = navController, currentScreenId = Screen.Aset.id){
                 currentScreen.value = it
                 navController.navigate(it.id)
             }

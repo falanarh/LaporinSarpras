@@ -2,15 +2,16 @@ package com.polstat.laporinsarpras.ui.screen
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -41,9 +42,15 @@ fun CustomBottomNavigation(
     ) {
         Row(
             modifier = Modifier
-                .background(color = Green)
+                .background(color = Green,
+                    shape = RoundedCornerShape(
+                        topStart = 15.dp,
+                        topEnd = 15.dp
+                    )
+                )
                 .padding(8.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .fillMaxHeight(0.06f),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {

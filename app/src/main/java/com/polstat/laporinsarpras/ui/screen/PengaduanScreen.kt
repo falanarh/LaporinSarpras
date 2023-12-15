@@ -1,4 +1,32 @@
 package com.polstat.laporinsarpras.ui.screen
 
-class PengaduanScreen {
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PengaduanScreen(navController: NavController){
+    val currentScreen= mutableStateOf<Screen>(Screen.Beranda)
+
+    Scaffold (
+        topBar = {},
+        bottomBar = {
+            CustomBottomNavigation(navController = navController, currentScreenId = Screen.Pengaduan.id){
+                currentScreen.value = it
+                navController.navigate(it.id)
+            }
+        },
+    ) {innerPadding->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+        ) {
+        }
+    }
 }
