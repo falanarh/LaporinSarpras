@@ -55,7 +55,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.polstat.laporinsarpras.R
-import com.polstat.laporinsarpras.api.ConfigurationApi
 import com.polstat.laporinsarpras.ui.state.EmailState
 import com.polstat.laporinsarpras.ui.state.PasswordState
 import com.polstat.laporinsarpras.ui.theme.Green
@@ -257,7 +256,7 @@ fun LoginButton(emailState: EmailState, passwordState: PasswordState, loginViewM
     ElevatedButton(
         onClick = {
             coroutineScope.launch {
-                loginViewModel.login(emailState.email, passwordState.password)
+                loginViewModel.requestLogin(emailState.email, passwordState.password)
                 // Panggil lambda onLoginClick saat tombol diklik
                 delay(500)
                 onLoginClick.invoke()
@@ -323,8 +322,7 @@ fun LoginScreenPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            val configurationApi = ConfigurationApi()
-            val loginViewModel = LoginViewModel(configurationApi.apiService)
+            val loginViewModel = LoginViewModel()
             val navController = rememberNavController()
             LoginScreen(loginViewModel, navController)
         }

@@ -2,26 +2,28 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
-import com.polstat.laporinsarpras.api.ApiService
-import com.polstat.laporinsarpras.request.LoginRequest
-import com.polstat.laporinsarpras.response.LoginResponse
+import com.polstat.laporinsarpras.model.LoginRequest
+import com.polstat.laporinsarpras.model.LoginResponse
+import com.polstat.laporinsarpras.repository.LoginRepository
 import kotlinx.coroutines.launch
 
-class LoginViewModel(private val apiService: ApiService) : ViewModel() {
-    private val _loginResponse = MutableLiveData<LoginResponse>()
+class LoginViewModel : ViewModel() {
+    private val loginRepository = LoginRepository()
+
+    private  val _loginResponse = MutableLiveData<LoginResponse>()
     val loginResponse: LiveData<LoginResponse> = _loginResponse
 
-    fun login(email: String, password: String) {
+    fun requestLogin(email: String, password: String){
+        println("Masuk sini")
         viewModelScope.launch {
             try {
-                val response = apiService.login(LoginRequest(email, password))
+                println("Masuk sini 2")
+                val response = loginRepository.requestForLogin(LoginRequest(email, password))
                 _loginResponse.value = response
+                println(response)
             } catch (e: Exception) {
-                // Gantilah dengan penanganan kesalahan yang sesuai
-                _loginResponse.value = LoginResponse(null, "${e.message}", null)
+                println("Error ini")
             }
         }
     }
-
 }
