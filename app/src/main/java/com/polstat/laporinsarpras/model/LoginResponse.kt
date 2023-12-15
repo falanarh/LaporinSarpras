@@ -1,12 +1,12 @@
-package com.polstat.laporinsarpras.response
+package com.polstat.laporinsarpras.model
 
 data class LoginResponse(
     val status: Int?,
     val message: String?,
-    val data: LoginData?,
+    val data: Data?,
 )
 
-class LoginData {
+class Data {
     val email: String = ""
     val accessToken: String = ""
 }
