@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">LaporinSarpras</string>
+    <string name="notValidEmail">Email tidak valid!</string>
 </resources>
