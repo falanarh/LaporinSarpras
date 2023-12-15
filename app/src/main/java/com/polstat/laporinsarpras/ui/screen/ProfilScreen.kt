@@ -16,11 +16,11 @@ import com.polstat.laporinsarpras.ui.theme.LaporinSarprasTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BerandaScreen(navController: NavController){
+fun ProfilScreen(navController: NavController) {
     Scaffold (
         topBar = {},
         bottomBar = {
-            CustomBottomNavigation(navController = navController, currentScreenId = Screen.Beranda.id) {}
+            CustomBottomNavigation(navController = navController, currentScreenId = Screen.Profil.id) {}
         },
     ) {innerPadding->
         Column(
@@ -33,7 +33,7 @@ fun BerandaScreen(navController: NavController){
 
 @Preview
 @Composable
-fun BerandaScreenPreview() {
+fun ProfilScreenPreview() {
     LaporinSarprasTheme {
         // A surface container using the 'background' color from the theme
         Surface(
@@ -41,7 +41,7 @@ fun BerandaScreenPreview() {
             color = MaterialTheme.colorScheme.background
         ) {
             val navController = rememberNavController()
-            BerandaScreen(navController)
+            ProfilScreen(navController)
         }
     }
 }
