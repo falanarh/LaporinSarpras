@@ -44,65 +44,51 @@ import com.polstat.laporinsarpras.R
 import com.polstat.laporinsarpras.ui.theme.DarkGreen
 import com.polstat.laporinsarpras.ui.theme.Green
 import com.polstat.laporinsarpras.ui.theme.LaporinSarprasTheme
-import com.polstat.laporinsarpras.ui.theme.LightGray
 import com.polstat.laporinsarpras.ui.theme.Roboto
 import com.polstat.laporinsarpras.ui.theme.typography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BerandaScreen(navController: NavController){
-    val currentScreen= mutableStateOf<Screen>(Screen.Beranda)
+fun BerandaScreen(navController: NavController) {
+    val currentScreen = mutableStateOf<Screen>(Screen.Beranda)
 
-    Scaffold (
+    Scaffold(
         topBar = {},
         bottomBar = {
-            CustomBottomNavigation(navController = navController, currentScreenId = Screen.Beranda.id){
+            CustomBottomNavigation(
+                navController = navController,
+                currentScreenId = Screen.Beranda.id
+            ) {
                 currentScreen.value = it
                 navController.navigate(it.id)
             }
         },
-    ) {innerPadding->
-        Column(
+    ) { innerPadding ->
+        LazyColumn(
             modifier = Modifier
-                .padding(innerPadding)
+                .fillMaxSize()
+                .padding(innerPadding),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ){
-                Box(
+            item {
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.235f)
-                        .background(Green)
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.765f)
-                        .align(Alignment.BottomCenter)
-                        .background(LightGray)
-                )
-                LazyColumn (
-                    modifier = Modifier.
-                        fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .height(250.dp)
                 ) {
-                    item {
-                        Spacer(modifier = Modifier.height(20.dp))
-                        NamaDanFoto()
-                        Spacer(modifier = Modifier.height(20.dp))
-                        PengaduanCard()
-                        Spacer(modifier = Modifier.height(20.dp))
-                        PengaduanSection()
-                    }
+                    BerandaAtas()
                 }
+                Spacer(modifier = Modifier.height(10.dp))
+                PengaduanSection()
+                Spacer(modifier = Modifier.height(20.dp))
+                RekapitulasiSection()
+                Spacer(modifier = Modifier.height(550.dp))
             }
         }
     }
 }
 
 @Composable
-fun NamaDanFoto(){
+fun NamaDanFoto() {
 //    val user = User(
 //        email = "falana@gmail.com",
 //        roles = listOf("ROLE_KOORDINATOR"),
@@ -113,7 +99,7 @@ fun NamaDanFoto(){
 //        address = "Jalan Ayub 16A/20"
 //    )
 
-    Row (
+    Row(
         modifier = Modifier
             .fillMaxWidth(0.85f),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -146,8 +132,8 @@ fun NamaDanFoto(){
 }
 
 @Composable
-fun PengaduanCard(){
-    ElevatedCard (
+fun PengaduanCard() {
+    ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
         ),
@@ -159,22 +145,22 @@ fun PengaduanCard(){
         ),
         shape = RoundedCornerShape(10.dp)
     ) {
-        Column (
+        Column(
             modifier = Modifier
                 .padding(20.dp)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Column (
+            Column(
                 modifier = Modifier
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Row (
+                Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Column (
+                    Column(
                         modifier = Modifier.fillMaxHeight(0.8f),
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
@@ -218,8 +204,43 @@ fun PengaduanCard(){
                         color = Green
                     )
                 }
-                PercentageBar(float = 43/60f)
+                PercentageBar(float = 43 / 60f)
             }
+        }
+    }
+}
+
+@Composable
+fun BerandaAtas(){
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.725f)
+                    .background(Green)
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.275f)
+//                                .align(Alignment.BottomCenter)
+                    .background(MaterialTheme.colorScheme.background)
+            )
+        }
+        Column {
+            Spacer(modifier = Modifier.height(20.dp))
+            NamaDanFoto()
+            Spacer(modifier = Modifier.height(20.dp))
+            PengaduanCard()
         }
     }
 }
@@ -237,19 +258,19 @@ fun PercentageBar(float: Float) {
 
 }
 
-@Preview
-@Composable
-fun PersentageBarPreview() {
-    LaporinSarprasTheme {
-        // A surface container using the 'background' color from the theme
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            PercentageBar(0.5f)
-        }
-    }
-}
+//@Preview
+//@Composable
+//fun PersentageBarPreview() {
+//    LaporinSarprasTheme {
+//        // A surface container using the 'background' color from the theme
+//        Surface(
+//            modifier = Modifier.fillMaxSize(),
+//            color = MaterialTheme.colorScheme.background
+//        ) {
+//            PercentageBar(0.5f)
+//        }
+//    }
+//}
 
 @Preview
 @Composable
