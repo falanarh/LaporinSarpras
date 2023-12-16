@@ -34,6 +34,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.polstat.laporinsarpras.R
+import com.polstat.laporinsarpras.ui.theme.Gray
+import com.polstat.laporinsarpras.ui.theme.LightGray
 import com.polstat.laporinsarpras.ui.theme.LightRed
 import com.polstat.laporinsarpras.ui.theme.Red
 import com.polstat.laporinsarpras.ui.theme.Roboto
@@ -94,10 +96,9 @@ fun PengaduanCardItem(index: Int){
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(20.dp))
-                .background(color = Color.LightGray)
+                .background(color = Gray)
                 .width(250.dp)
                 .height(160.dp)
-                .clickable { }
                 .padding(vertical = 12.dp, horizontal = 18.dp),
             contentAlignment = Alignment.Center
         ) {
