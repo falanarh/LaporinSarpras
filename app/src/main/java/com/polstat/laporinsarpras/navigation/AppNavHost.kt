@@ -1,6 +1,6 @@
 package com.polstat.laporinsarpras.navigation
 
-import LoginViewModel
+
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,6 +13,7 @@ import com.polstat.laporinsarpras.ui.screen.LoginFailedScreen
 import com.polstat.laporinsarpras.ui.screen.NotifikasiScreen
 import com.polstat.laporinsarpras.ui.screen.PengaduanScreen
 import com.polstat.laporinsarpras.ui.screen.ProfilScreen
+import com.polstat.laporinsarpras.ui.viewmodel.LoginViewModel
 
 @Composable
 fun AppNavHost() {

@@ -1,6 +1,5 @@
 package com.polstat.laporinsarpras.ui.screen
 
-import LoginViewModel
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
@@ -13,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.polstat.laporinsarpras.ui.theme.Roboto
+import com.polstat.laporinsarpras.ui.viewmodel.LoginViewModel
 
 
 @Composable
