@@ -51,6 +51,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.polstat.laporinsarpras.R
@@ -68,7 +69,10 @@ import kotlinx.coroutines.launch
 
 // Komponen UI
 @Composable
-fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {
+fun LoginScreen(
+    loginViewModel: LoginViewModel,
+    navController: NavController
+) {
     val emailState = remember { EmailState() }
     val passwordState = remember { PasswordState() }
     val loginResponse by loginViewModel.loginResponse.observeAsState()
@@ -322,9 +326,9 @@ fun LoginScreenPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            val loginViewModel = LoginViewModel()
-            val navController = rememberNavController()
-            LoginScreen(loginViewModel, navController)
+//            val loginViewModel = LoginViewModel()
+//            val navController = rememberNavController()
+//            LoginScreen(loginViewModel, navController)
         }
     }
 }

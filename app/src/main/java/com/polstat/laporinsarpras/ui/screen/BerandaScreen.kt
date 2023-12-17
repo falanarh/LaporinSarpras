@@ -38,18 +38,36 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.polstat.laporinsarpras.R
+import com.polstat.laporinsarpras.repository.PengaduanRepository
+import com.polstat.laporinsarpras.repository.UserPreferencesRepository
+import com.polstat.laporinsarpras.repository.UserRepository
 import com.polstat.laporinsarpras.ui.theme.DarkGreen
 import com.polstat.laporinsarpras.ui.theme.Green
 import com.polstat.laporinsarpras.ui.theme.LaporinSarprasTheme
 import com.polstat.laporinsarpras.ui.theme.Roboto
 import com.polstat.laporinsarpras.ui.theme.typography
+import com.polstat.laporinsarpras.ui.viewmodel.BerandaViewModel
+import com.polstat.laporinsarpras.ui.viewmodel.PengaduanMendesakViewModel
+
+enum class LaporinSarprasScreen {
+    Login,
+    Register,
+    Beranda,
+    Pengaduan,
+    PengaduanMendesak,
+    PengaduanTerbaru,
+    Notifikasi,
+    Aset,
+    Profil
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BerandaScreen(navController: NavController) {
+fun BerandaScreen(navController: NavController, berandaViewModel: BerandaViewModel = viewModel(factory = BerandaViewModel.Factory)) {
     val currentScreen = mutableStateOf<Screen>(Screen.Beranda)
 
     Scaffold(
@@ -78,7 +96,7 @@ fun BerandaScreen(navController: NavController) {
                     BerandaAtas()
                 }
                 Spacer(modifier = Modifier.height(10.dp))
-                PengaduanSection()
+                PengaduanSection(navController)
                 Spacer(modifier = Modifier.height(20.dp))
                 RekapitulasiSection()
                 Spacer(modifier = Modifier.height(550.dp))
@@ -282,7 +300,7 @@ fun BerandaScreenPreview() {
             color = MaterialTheme.colorScheme.background
         ) {
             val navController = rememberNavController()
-            BerandaScreen(navController)
+            BerandaScreen(navController, viewModel(factory = BerandaViewModel.Factory))
         }
     }
 }

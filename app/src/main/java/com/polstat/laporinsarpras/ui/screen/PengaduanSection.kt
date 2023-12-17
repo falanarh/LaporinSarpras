@@ -33,12 +33,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.polstat.laporinsarpras.R
 import com.polstat.laporinsarpras.ui.theme.Gray
 import com.polstat.laporinsarpras.ui.theme.LightGray
 import com.polstat.laporinsarpras.ui.theme.LightRed
 import com.polstat.laporinsarpras.ui.theme.Red
 import com.polstat.laporinsarpras.ui.theme.Roboto
+import com.polstat.laporinsarpras.ui.viewmodel.PengaduanMendesakViewModel
 
 val pengaduanCard = listOf(
     "Mendesak",
@@ -46,7 +48,7 @@ val pengaduanCard = listOf(
 )
 
 @Composable
-fun PengaduanSection(){
+fun PengaduanSection(navController: NavController){
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -62,14 +64,14 @@ fun PengaduanSection(){
         Spacer(modifier = Modifier.height(20.dp))
         LazyRow{
             items(pengaduanCard.size){index ->
-                PengaduanCardItem(index = index)
+                PengaduanCardItem(index = index, navController)
             }
         }
     }
 }
 
 @Composable
-fun PengaduanCardItem(index: Int){
+fun PengaduanCardItem(index: Int, navController: NavController){
     var firstItemPaddingStart = 16.dp
     var lastItemPaddingEnd = 0.dp
 
@@ -124,7 +126,11 @@ fun PengaduanCardItem(index: Int){
                         gradient = Brush.horizontalGradient(
                             colors = listOf(Red, LightRed)
                         )
-                    ) {}
+                    ) {
+                        if (index == 0){
+                            navController.navigate("pengaduanMendesak")
+                        }
+                    }
                     Image(
                         painter = image,
                         modifier = Modifier.fillMaxHeight(),
@@ -169,6 +175,6 @@ fun PengaduanSectionPreview() {
             .fillMaxSize(),
         color = Color.White
     ) {
-        PengaduanSection()
+//        PengaduanSection()
     }
 }

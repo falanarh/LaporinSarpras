@@ -1,5 +1,8 @@
 package com.polstat.laporinsarpras.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class User(
     val email: String,
     val roles: List<String>,
