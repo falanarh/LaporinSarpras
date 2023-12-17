@@ -1,6 +1,5 @@
 package com.polstat.laporinsarpras.ui.screen
 
-import LoginViewModel
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -63,6 +62,7 @@ import com.polstat.laporinsarpras.ui.theme.LightGray
 import com.polstat.laporinsarpras.ui.theme.Red
 import com.polstat.laporinsarpras.ui.theme.Roboto
 import com.polstat.laporinsarpras.ui.theme.typography
+import com.polstat.laporinsarpras.ui.viewmodel.LoginViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
