@@ -1,6 +1,7 @@
 package com.polstat.laporinsarpras.ui.viewmodel
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,7 +11,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.polstat.laporinsarpras.LaporinSarprasApplication
+import com.polstat.laporinsarpras.model.ConfirmPengaduan
 import com.polstat.laporinsarpras.model.Pengaduan
+import com.polstat.laporinsarpras.model.SampleData
 import com.polstat.laporinsarpras.model.User
 import com.polstat.laporinsarpras.repository.PengaduanRepository
 import com.polstat.laporinsarpras.repository.UserPreferencesRepository
@@ -18,6 +21,8 @@ import com.polstat.laporinsarpras.repository.UserRepository
 import com.polstat.laporinsarpras.repository.UserState
 import com.polstat.laporinsarpras.response.ListPengaduanResponse
 import com.polstat.laporinsarpras.response.UserResponse
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 private const val TAG = "PengaduanMendesakViewModel"
@@ -31,7 +36,16 @@ class PengaduanMendesakViewModel (
     private lateinit var listPengaduanMendesak: List<Pengaduan>
     private lateinit var userState: UserState
     private lateinit var userResponse: UserResponse
-    var tokenUser = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmYWxhbmFAZ21haWwuY29tIiwicm9sZXMiOlsiUk9MRV9LT09SRElOQVRPUiJdLCJpc3MiOiJQb2xzdGF0IiwiaWF0IjoxNzAyODA1NjY2LCJleHAiOjE3MDI4OTIwNjZ9.z2_gv8T89xETnRU0XkC39xke4VhVN9soN1xhLsn6yqEgpavljNKp64UtbpiYX5mbX9WzDqQfe96ZgR3b1ELpjw"
+    val _cards = MutableStateFlow(listOf<Pengaduan>())
+    val cards: StateFlow<List<Pengaduan>> get() = _cards
+    val _expandedCardList = MutableStateFlow(listOf<Long>())
+    val expandedCardList: StateFlow<List<Long>> get() = _expandedCardList
+    val _setTolakStatusResult = MutableStateFlow<PengaduanMendesakOperationResult>(PengaduanMendesakOperationResult.Success)
+    val setTolakStatusResult: StateFlow<PengaduanMendesakOperationResult> get() = _setTolakStatusResult
+    var keterangan by mutableStateOf("")
+        private set
+
+
     var pengaduanMendesakUiState: PengaduanMendesakUiState by mutableStateOf(PengaduanMendesakUiState.Loading)
         private set
 
@@ -63,6 +77,10 @@ class PengaduanMendesakViewModel (
         return userState.isPelapor
     }
 
+    fun updateKeterangan(newKeterangan: String) {
+        keterangan = newKeterangan
+    }
+
     suspend fun getPengaduanMendesaks() {
         println("Mau masuk")
         println(userState.token)
@@ -82,6 +100,47 @@ class PengaduanMendesakViewModel (
 
         Log.d(TAG, "pengaduanMendesak: ${listPengaduanMendesak}")
         pengaduanMendesakUiState = PengaduanMendesakUiState.Success(listPengaduanMendesak)
+        _cards.emit(listPengaduanMendesak)
+    }
+
+    suspend fun tolakPengaduan(pengaduan: Pengaduan) {
+        val tolakPengaduan = ConfirmPengaduan(
+            keputusan = "DITOLAK",
+            pengaduanId = pengaduan.pengaduanId,
+            emailTeknisi = "",
+            keterangan = keterangan
+        )
+        Log.d(TAG, tolakPengaduan.toString())
+        viewModelScope.launch {
+            try {
+                pengaduan.pengaduanId?.let { pengaduanRepository.confirmPengaduan(userState.token, tolakPengaduan) }
+                _setTolakStatusResult.value = PengaduanMendesakOperationResult.Success
+            } catch (e: Exception) {
+                Log.e(TAG, "Error: ${e.message}")
+                _setTolakStatusResult.value = PengaduanMendesakOperationResult.Error
+            }
+        }
+    }
+
+//    suspend fun deleteReport(report: Report): ReportOperationResult {
+//        try {
+//            report.id?.let { reportRepository.deleteReport(userState.token, it) }
+//        } catch (e: Exception) {
+//            Log.e(TAG, "Error: ${e.message}")
+//            return ReportOperationResult.Error
+//        }
+//
+//        return ReportOperationResult.Success
+//    }
+
+    fun cardArrowClick(cardId: Long) {
+        _expandedCardList.value = _expandedCardList.value.toMutableList().also { list ->
+            if (list.contains(cardId)) {
+                list.remove(cardId)
+            } else {
+                list.add(cardId)
+            }
+        }
     }
 
     companion object {

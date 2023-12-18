@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.polstat.laporinsarpras.R
+import com.polstat.laporinsarpras.ui.theme.Beige
 import com.polstat.laporinsarpras.ui.theme.Gray
 import com.polstat.laporinsarpras.ui.theme.LightGray
 import com.polstat.laporinsarpras.ui.theme.LightRed
@@ -98,7 +99,7 @@ fun PengaduanCardItem(index: Int, navController: NavController){
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(20.dp))
-                .background(color = Gray)
+                .background(color = Beige)
                 .width(250.dp)
                 .height(160.dp)
                 .padding(vertical = 12.dp, horizontal = 18.dp),

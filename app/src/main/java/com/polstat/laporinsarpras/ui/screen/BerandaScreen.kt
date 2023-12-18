@@ -93,13 +93,12 @@ fun BerandaScreen(navController: NavController, berandaViewModel: BerandaViewMod
                     modifier = Modifier
                         .height(250.dp)
                 ) {
-                    BerandaAtas()
+                    BerandaAtas(berandaViewModel)
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 PengaduanSection(navController)
                 Spacer(modifier = Modifier.height(20.dp))
-                RekapitulasiSection()
-                Spacer(modifier = Modifier.height(550.dp))
+                RekapitulasiSection(berandaViewModel)
             }
         }
     }
@@ -150,7 +149,10 @@ fun NamaDanFoto() {
 }
 
 @Composable
-fun PengaduanCard() {
+fun PengaduanCard(berandaViewModel: BerandaViewModel) {
+    val jmlPengaduan = berandaViewModel.listPengaduan.value.size
+    val jmlPengaduanProses = berandaViewModel.listPengaduanProses.value.size
+
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
@@ -202,9 +204,9 @@ fun PengaduanCard() {
                                     fontWeight = FontWeight.Bold
                                 )
                             ) {
-                                append("43")
+                                append("${jmlPengaduanProses}")
                             }
-                            append("/60")
+                            append("/${jmlPengaduan}")
                         }
 
                         Text(text = text)
@@ -222,14 +224,14 @@ fun PengaduanCard() {
                         color = Green
                     )
                 }
-                PercentageBar(float = 43 / 60f)
+                PercentageBar(float = (jmlPengaduanProses.toFloat() / jmlPengaduan.toFloat()))
             }
         }
     }
 }
 
 @Composable
-fun BerandaAtas(){
+fun BerandaAtas(berandaViewModel: BerandaViewModel){
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -258,7 +260,7 @@ fun BerandaAtas(){
             Spacer(modifier = Modifier.height(20.dp))
             NamaDanFoto()
             Spacer(modifier = Modifier.height(20.dp))
-            PengaduanCard()
+            PengaduanCard(berandaViewModel)
         }
     }
 }

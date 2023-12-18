@@ -11,7 +11,6 @@ import com.polstat.laporinsarpras.ui.screen.BerandaScreen
 import com.polstat.laporinsarpras.ui.screen.LoginScreen
 import com.polstat.laporinsarpras.ui.screen.LoginSuccessScreen
 import com.polstat.laporinsarpras.ui.screen.LoginFailedScreen
-import com.polstat.laporinsarpras.ui.screen.NotifikasiScreen
 import com.polstat.laporinsarpras.ui.screen.PengaduanScreen
 import com.polstat.laporinsarpras.ui.screen.PengaduanMendesakScreen
 import com.polstat.laporinsarpras.ui.screen.ProfilScreen
@@ -32,7 +31,6 @@ fun AppNavHost() {
             )
         }
         composable("pengaduan") { PengaduanScreen(navController) }
-        composable("notifikasi") { NotifikasiScreen(navController) }
         composable("aset") { AsetScreen(navController) }
         composable("profil") { ProfilScreen(navController)}
 //        composable("success") { LoginSuccessScreen(loginViewModel, navController) }

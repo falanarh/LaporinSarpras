@@ -37,9 +37,10 @@ import com.polstat.laporinsarpras.ui.theme.Gray
 import com.polstat.laporinsarpras.ui.theme.Green
 import com.polstat.laporinsarpras.ui.theme.LightGray
 import com.polstat.laporinsarpras.ui.theme.Roboto
+import com.polstat.laporinsarpras.ui.viewmodel.BerandaViewModel
 
 @Composable
-fun RekapitulasiSection(){
+fun RekapitulasiSection(berandaViewModel: BerandaViewModel){
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -59,7 +60,7 @@ fun RekapitulasiSection(){
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
-        Pengaduan()
+        Pengaduan(berandaViewModel)
         Spacer(modifier = Modifier.height(20.dp))
         Aset()
         Spacer(modifier = Modifier.height(20.dp))
@@ -68,7 +69,7 @@ fun RekapitulasiSection(){
 }
 
 @Composable
-fun Pengaduan(){
+fun Pengaduan(berandaViewModel: BerandaViewModel){
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
@@ -91,7 +92,7 @@ fun Pengaduan(){
                     .fillMaxHeight(),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                val jmlPengaduan = "25"
+                val jmlPengaduan = "${berandaViewModel.listPengaduan.value.size}"
 
                 Text(
                     text = "Pengaduan",
@@ -309,6 +310,6 @@ fun RekapitulasiSectionPreview() {
         modifier = Modifier
             .fillMaxSize()
     ) {
-        RekapitulasiSection()
+//        RekapitulasiSection()
     }
 }

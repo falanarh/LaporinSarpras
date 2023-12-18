@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
@@ -20,6 +21,7 @@ import com.polstat.laporinsarpras.ui.theme.Roboto
 @Composable
 fun AppToolbar(
     toolbarTitle: String,
+    refreshIconClicked: () -> Unit,
     navigationIconClicked: () -> Unit
 ) {
 
@@ -31,7 +33,7 @@ fun AppToolbar(
                 style = androidx.compose.ui.text.TextStyle(
                     fontFamily = Roboto,
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = 16.sp
+                    fontSize = 20.sp
                 ),
                 color = Color.White
             )
@@ -46,10 +48,18 @@ fun AppToolbar(
                     tint = Color.White
                 )
             }
-
         },
-        actions = {}
+        actions = {
+            IconButton(onClick = { refreshIconClicked.invoke()  }) {
+                Icon(
+                    imageVector = Icons.Filled.Refresh,
+                    contentDescription = "Refresh",
+                    tint = Color.White
+                )
+            }
+        }
     )
+
 }
 
 
@@ -62,6 +72,6 @@ fun SimpleTopAppBarPreview() {
         color = Color.White
     ) {
 //        SimpleTopAppBar(title = "Pengaduan Mendesak")
-        AppToolbar(toolbarTitle = "Pengaduan Mendesak") {}
+//        AppToolbar(toolbarTitle = "Pengaduan Mendesak") {}
     }
 }

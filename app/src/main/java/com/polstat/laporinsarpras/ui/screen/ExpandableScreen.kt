@@ -212,6 +212,6 @@ fun ExpandableScreenPrevew() {
         color = Color.White
     ) {
         val expandableViewModel = ExpandableViewModel()
-        ExpandableScreen(viewModel = expandableViewModel)
+//        ExpandableScreen(viewModel = expandableViewModel)
     }
 }
