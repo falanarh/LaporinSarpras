@@ -1,9 +1,13 @@
 package com.polstat.laporinsarpras.network
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.polstat.laporinsarpras.repository.AsetRepository
+import com.polstat.laporinsarpras.repository.NetworkAsetRepository
 import com.polstat.laporinsarpras.repository.NetworkPengaduanRepository
+import com.polstat.laporinsarpras.repository.NetworkRuangRepository
 import com.polstat.laporinsarpras.repository.NetworkUserRepository
 import com.polstat.laporinsarpras.repository.PengaduanRepository
+import com.polstat.laporinsarpras.repository.RuangRepository
 import com.polstat.laporinsarpras.repository.UserRepository
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -14,6 +18,8 @@ import retrofit2.Retrofit
 interface AppContainer {
     val userRepository: UserRepository
     val pengaduanRepository: PengaduanRepository
+    val asetRepository: AsetRepository
+    val ruangRepository: RuangRepository
 }
 
 class DefaultAppContainer() : AppContainer {
@@ -36,6 +42,14 @@ class DefaultAppContainer() : AppContainer {
         retrofit.create(PengaduanApiService::class.java)
     }
 
+    private val asetApiService: AsetApiService by lazy {
+        retrofit.create(AsetApiService::class.java)
+    }
+
+    private val ruangApiService: RuangApiService by lazy {
+        retrofit.create(RuangApiService::class.java)
+    }
+
     //Repository
     override val userRepository: UserRepository by lazy {
         NetworkUserRepository(userApiService)
@@ -45,4 +59,11 @@ class DefaultAppContainer() : AppContainer {
         NetworkPengaduanRepository(pengaduanApiService)
     }
 
+    override val asetRepository: AsetRepository by lazy {
+        NetworkAsetRepository(asetApiService)
+    }
+
+    override val ruangRepository: RuangRepository by lazy {
+        NetworkRuangRepository(ruangApiService)
+    }
 }

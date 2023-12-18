@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 data class AsetResponse (
     val status: Int?,
     val message: String?,
-    val data: Aset?
+    val data: Aset
 )

@@ -8,11 +8,17 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.polstat.laporinsarpras.LaporinSarprasApplication
+import com.polstat.laporinsarpras.model.Aset
 import com.polstat.laporinsarpras.model.Pengaduan
+import com.polstat.laporinsarpras.model.Ruang
+import com.polstat.laporinsarpras.repository.AsetRepository
 import com.polstat.laporinsarpras.repository.PengaduanRepository
+import com.polstat.laporinsarpras.repository.RuangRepository
 import com.polstat.laporinsarpras.repository.UserPreferencesRepository
 import com.polstat.laporinsarpras.repository.UserState
+import com.polstat.laporinsarpras.response.ListAsetResponse
 import com.polstat.laporinsarpras.response.ListPengaduanResponse
+import com.polstat.laporinsarpras.response.ListRuangResponse
 import com.polstat.laporinsarpras.ui.screen.Pengaduan
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -28,7 +34,9 @@ private const val TAG = "BerandaViewModel"
 
 class BerandaViewModel (
     private val userPreferencesRepository: UserPreferencesRepository,
-    private val pengaduanRepository: PengaduanRepository
+    private val pengaduanRepository: PengaduanRepository,
+    private val asetRepository: AsetRepository,
+    private val ruangRepository: RuangRepository
 ) : ViewModel() {
     private  val _uiState = MutableStateFlow(LaporinSarprasUiState())
     val uiState: StateFlow<LaporinSarprasUiState> = _uiState.asStateFlow()
@@ -49,17 +57,25 @@ class BerandaViewModel (
 //    )
     private lateinit var userState: UserState
     private lateinit var listPengaduanResponse: ListPengaduanResponse
+    private lateinit var listAsetResponse: ListAsetResponse
+    private lateinit var listRuangResponse: ListRuangResponse
     val _listPengaduan = MutableStateFlow(listOf<Pengaduan>())
     val listPengaduan: StateFlow<List<Pengaduan>> get() = _listPengaduan
     val _listPengaduanProses = MutableStateFlow(listOf<Pengaduan>())
     val listPengaduanProses: StateFlow<List<Pengaduan>> get() = _listPengaduanProses
+    val _listAset = MutableStateFlow(listOf<Aset>())
+    val listAset: StateFlow<List<Aset>> get() = _listAset
+    val _listRuang = MutableStateFlow(listOf<Ruang>())
+    val listRuang: StateFlow<List<Ruang>> get() = _listRuang
 
     init {
         viewModelScope.launch {
             userPreferencesRepository.user.collect{
                 userState = it
                 try {
-                    getAllPengaduans()
+                    getAllPengaduan()
+                    getAllAset()
+                    getAllRuang()
                 } catch (e: Exception) {
                     Log.e(TAG, e.stackTraceToString())
                 }
@@ -83,7 +99,7 @@ class BerandaViewModel (
 //        }
 //    }
 
-    suspend fun getAllPengaduans() {
+    suspend fun getAllPengaduan() {
         try {
             if (userState.isKoordinator){
                 listPengaduanResponse = pengaduanRepository.getAllPengaduans(userState.token)
@@ -98,6 +114,26 @@ class BerandaViewModel (
                 status = "DITOLAK"
             )
 
+        } catch (e: Exception) {
+            Log.e(TAG, "Error: ${e.message}")
+            return
+        }
+    }
+
+    suspend fun getAllAset(){
+        try {
+            listAsetResponse = asetRepository.getAsets(userState.token)
+            _listAset.value = listAsetResponse.data
+        } catch (e: Exception) {
+            Log.e(TAG, "Error: ${e.message}")
+            return
+        }
+    }
+
+    suspend fun getAllRuang(){
+        try {
+            listRuangResponse = ruangRepository.getRuangs(userState.token)
+            _listRuang.value = listRuangResponse.data!!
         } catch (e: Exception) {
             Log.e(TAG, "Error: ${e.message}")
             return
@@ -164,7 +200,9 @@ class BerandaViewModel (
                 val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as LaporinSarprasApplication)
                 BerandaViewModel(
                     userPreferencesRepository = application.userPreferenceRepository,
-                    pengaduanRepository = application.container.pengaduanRepository
+                    pengaduanRepository = application.container.pengaduanRepository,
+                    asetRepository = application.container.asetRepository,
+                    ruangRepository = application.container.ruangRepository
                 )
             }
         }

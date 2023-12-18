@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -25,15 +24,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.polstat.laporinsarpras.ui.theme.Gray
 import com.polstat.laporinsarpras.ui.theme.Green
 import com.polstat.laporinsarpras.ui.theme.LightGray
 import com.polstat.laporinsarpras.ui.theme.Roboto
@@ -62,9 +57,9 @@ fun RekapitulasiSection(berandaViewModel: BerandaViewModel){
         Spacer(modifier = Modifier.height(20.dp))
         Pengaduan(berandaViewModel)
         Spacer(modifier = Modifier.height(20.dp))
-        Aset()
+        Aset(berandaViewModel)
         Spacer(modifier = Modifier.height(20.dp))
-        Ruang()
+        Ruang(berandaViewModel)
     }
 }
 
@@ -147,7 +142,9 @@ fun Pengaduan(berandaViewModel: BerandaViewModel){
 }
 
 @Composable
-fun Aset(){
+fun Aset(berandaViewModel: BerandaViewModel){
+    val jmlAset = berandaViewModel.listAset.value.size
+
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
@@ -170,7 +167,7 @@ fun Aset(){
                     .fillMaxHeight(),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                val jmlAset = "68"
+//                val jmlAset = "68"
 
                 Text(
                     text = "Aset",
@@ -182,7 +179,7 @@ fun Aset(){
                     color = Color.Gray
                 )
                 Text(
-                    text = jmlAset,
+                    text = "${jmlAset}",
                     style = TextStyle(
                         fontFamily = Roboto,
                         fontSize = 24.sp,
@@ -225,7 +222,9 @@ fun Aset(){
 }
 
 @Composable
-fun Ruang(){
+fun Ruang(berandaViewModel: BerandaViewModel){
+    val jmlRuang = berandaViewModel.listRuang.value.size
+
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
@@ -248,7 +247,7 @@ fun Ruang(){
                     .fillMaxHeight(),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                val jmlRuang = "36"
+//                val jmlRuang = "36"
 
                 Text(
                     text = "Ruang",
@@ -260,7 +259,7 @@ fun Ruang(){
                     color = Color.Gray
                 )
                 Text(
-                    text = jmlRuang,
+                    text = "${jmlRuang}",
                     style = TextStyle(
                         fontFamily = Roboto,
                         fontSize = 24.sp,

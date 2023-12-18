@@ -17,9 +17,9 @@ interface AsetApiService {
     @GET("/barangs")
     suspend fun getAsets(@Header("Authorization") token: String) : ListAsetResponse
     @GET("/barangs/search")
-    suspend fun getAsetById(@Header("Authorization") token: String, @Query("barangId") barangId: Long) : AsetResponse
+    suspend fun getAsetById(@Header("Authorization") token: String, @Query("barangId") barangId: String) : AsetResponse
     @PUT("/barangs")
     suspend fun editAset(@Header("Authorization") token: String, @Body aset: Aset)
     @DELETE("/barangs")
-    suspend fun deleteAset(@Header("Authorization") token: String, @Query("barangId") barangId: Long)
+    suspend fun deleteAset(@Header("Authorization") token: String, @Query("barangId") barangId: String)
 }

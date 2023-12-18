@@ -19,6 +19,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,13 +30,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -51,6 +54,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -63,10 +67,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.polstat.laporinsarpras.model.Pengaduan
+import com.polstat.laporinsarpras.model.UserWithRole
 import com.polstat.laporinsarpras.ui.theme.Blue
 import com.polstat.laporinsarpras.ui.theme.DarkGreen
 import com.polstat.laporinsarpras.ui.theme.Green
@@ -245,6 +249,7 @@ fun ExpandablePengaduanMendesak(expanded: Boolean = true, card: Pengaduan, navCo
         shrinkVertically(animationSpec = tween(Constants.CollapseAnimation))
     }
     val openDialog = remember { mutableStateOf(false) }
+    val openTerimaDialog = remember { mutableStateOf(false) }
 
     AnimatedVisibility(
         visible = expanded,
@@ -292,7 +297,7 @@ fun ExpandablePengaduanMendesak(expanded: Boolean = true, card: Pengaduan, navCo
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                         append("Email Teknisi: ")
                     }
-                    append(card.emailTeknisi ?: "-")
+                    append(if (card.emailTeknisi.isNullOrEmpty()) "-" else card.emailTeknisi)
                 },
                 textAlign = TextAlign.Center,
                 fontSize = 19.sp,
@@ -412,7 +417,11 @@ fun ExpandablePengaduanMendesak(expanded: Boolean = true, card: Pengaduan, navCo
                 horizontalArrangement = Arrangement.Center
             ) {
                 Button(
-                    onClick = { /* Handle click event here */ },
+                    onClick = {
+                        if (card.status == "MENUNGGU") {
+                            openTerimaDialog.value = true
+                        }
+                    },
                     enabled = card.status == "MENUNGGU",
                     shape = RoundedCornerShape(8.dp), // Atur sudut bulat di sini
                     modifier = Modifier.padding(8.dp),
@@ -455,6 +464,7 @@ fun ExpandablePengaduanMendesak(expanded: Boolean = true, card: Pengaduan, navCo
                 }
             }
             ConfirmationDialog(openDialog = openDialog, onDismiss = { openDialog.value = false }, navController, viewModel, card)
+            TerimaDialog(openTerimaDialog = openTerimaDialog, onDismiss = { openTerimaDialog.value = false }, navController, viewModel, card)
         }
     }
 }
@@ -539,6 +549,139 @@ fun ConfirmationDialog(openDialog: MutableState<Boolean>, onDismiss: () -> Unit,
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TerimaDialog(openTerimaDialog: MutableState<Boolean>, onDismiss: () -> Unit, navController: NavController, viewModel: PengaduanMendesakViewModel, pengaduan: Pengaduan) {
+    val openToast = remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+
+    if (openTerimaDialog.value) {
+        AlertDialog(
+            onDismissRequest = {
+                openTerimaDialog.value = false
+            },
+            title = {
+                Text(text = "Penugasan Pengaduan")
+            },
+            text = {
+                Column {
+                    Text("Pilih Teknisi :")
+                    DropdownMenuTeknisi(viewModel)
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        openTerimaDialog.value = false
+                        scope.launch {
+                            viewModel.terimaPengaduan(pengaduan)
+                        }
+                        openToast.value = true
+                    },
+                    contentPadding = PaddingValues(10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = DarkGreen
+                    ),
+                    shape = RoundedCornerShape(5.dp), // Atur sudut bulat di sini
+                ) {
+                    Text(
+                        text = "Yakin",
+                        fontFamily = Roboto,
+                        fontSize = 16.sp,
+                    )
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        openTerimaDialog.value = false
+                        // Handle cancellation here
+                    },
+                    contentPadding = PaddingValues(10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.LightGray
+                    ),
+                    shape = RoundedCornerShape(5.dp), // Atur sudut bulat di sini
+                ) {
+                    Text(
+                        text = "Batal",
+                        fontFamily = Roboto,
+                        fontSize = 16.sp
+                    )
+                }
+            }
+        )
+    }
+    if (openToast.value){
+        if (viewModel.setTolakStatusResult.value == PengaduanMendesakOperationResult.Success){
+            Toast.makeText(LocalContext.current, "Berhasil menerima pengaduan!", Toast.LENGTH_SHORT).show()
+            navController.navigate("pengaduanMendesak")
+        } else {
+            Toast.makeText(LocalContext.current, "Gagal menerima pengaduan!", Toast.LENGTH_SHORT).show()
+        }
+    }
+}
+
+@Composable
+fun DropdownMenuTeknisi(viewModel: PengaduanMendesakViewModel) {
+    var daftarTeknisi: List<UserWithRole> by remember { mutableStateOf(emptyList()) }
+    var expanded by remember { mutableStateOf(false) }
+    var selectedIndex by remember { mutableStateOf(-1) }
+    var scope = rememberCoroutineScope()
+
+    daftarTeknisi = viewModel.listUserWithRole.value
+
+    if(viewModel.getAllTeknisiResult.value == PengaduanMendesakOperationResult.Success) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentSize(Alignment.TopStart)
+        ) {
+            Text(
+                if (selectedIndex >= 0) daftarTeknisi[selectedIndex].firstName else "Pilih satu teknisi",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(onClick = { expanded = true })
+                    .background(Color.LightGray)
+                    .padding(16.dp)
+            )
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.fillMaxWidth(0.66f)
+            ) {
+                daftarTeknisi.forEachIndexed { index, teknisi ->
+                    DropdownMenuItem(onClick = {
+                        selectedIndex = index
+                        expanded = false
+                        scope.launch {
+                            viewModel.updateSelectedTeknisi(teknisi)
+                        }
+                    }) {
+                        Text(text = teknisi.firstName)
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+//@Preview(showBackground = true)
+//@Composable
+//fun DropdownMenuTeknisiPreview() {
+//    DropdownMenuTeknisi(viewModel = viewModel(factory = PengaduanMendesakViewModel.Factory))
+//}
+
+
+//@Preview(showBackground = true)
+//@Composable
+//fun DropdownMenuDemoPreview() {
+//    DropdownMenuTeknisi()
+//}
+
+
 
 @Preview
 @Composable

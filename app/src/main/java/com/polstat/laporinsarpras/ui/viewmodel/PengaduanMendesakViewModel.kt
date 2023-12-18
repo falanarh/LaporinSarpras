@@ -1,7 +1,6 @@
 package com.polstat.laporinsarpras.ui.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,13 +12,13 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.polstat.laporinsarpras.LaporinSarprasApplication
 import com.polstat.laporinsarpras.model.ConfirmPengaduan
 import com.polstat.laporinsarpras.model.Pengaduan
-import com.polstat.laporinsarpras.model.SampleData
-import com.polstat.laporinsarpras.model.User
+import com.polstat.laporinsarpras.model.UserWithRole
 import com.polstat.laporinsarpras.repository.PengaduanRepository
 import com.polstat.laporinsarpras.repository.UserPreferencesRepository
 import com.polstat.laporinsarpras.repository.UserRepository
 import com.polstat.laporinsarpras.repository.UserState
 import com.polstat.laporinsarpras.response.ListPengaduanResponse
+import com.polstat.laporinsarpras.response.ListUserWithRoleResponse
 import com.polstat.laporinsarpras.response.UserResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,6 +33,7 @@ class PengaduanMendesakViewModel (
 ) : ViewModel(){
     private lateinit var listPengaduanResponse : ListPengaduanResponse
     private lateinit var listPengaduanMendesak: List<Pengaduan>
+    private lateinit var listUserWithRoleResponse: ListUserWithRoleResponse
     private lateinit var userState: UserState
     private lateinit var userResponse: UserResponse
     val _cards = MutableStateFlow(listOf<Pengaduan>())
@@ -42,12 +42,30 @@ class PengaduanMendesakViewModel (
     val expandedCardList: StateFlow<List<Long>> get() = _expandedCardList
     val _setTolakStatusResult = MutableStateFlow<PengaduanMendesakOperationResult>(PengaduanMendesakOperationResult.Success)
     val setTolakStatusResult: StateFlow<PengaduanMendesakOperationResult> get() = _setTolakStatusResult
+    val _setTerimaStatusResult = MutableStateFlow<PengaduanMendesakOperationResult>(PengaduanMendesakOperationResult.Success)
+    val setTerimaStatusResult: StateFlow<PengaduanMendesakOperationResult> get() = _setTerimaStatusResult
+    val _getAllTeknisiResult = MutableStateFlow<PengaduanMendesakOperationResult>(PengaduanMendesakOperationResult.Success)
+    val getAllTeknisiResult: StateFlow<PengaduanMendesakOperationResult> get() = _getAllTeknisiResult
     var keterangan by mutableStateOf("")
         private set
+    val initialTeknisi = UserWithRole(
+        userId = 0L,
+        roles = emptyList(),
+        position = "",
+        email = "",
+        password = "",
+        firstName = "",
+        lastName = "",
+        phoneNumber = "",
+        address = ""
+    )
 
+    var selectedTeknisi by mutableStateOf(initialTeknisi)
 
     var pengaduanMendesakUiState: PengaduanMendesakUiState by mutableStateOf(PengaduanMendesakUiState.Loading)
         private set
+    val _listUserWithRole = MutableStateFlow(listOf<UserWithRole>())
+    val listUserWithRole: StateFlow<List<UserWithRole>> get() = _listUserWithRole
 
     init {
         viewModelScope.launch {
@@ -58,6 +76,7 @@ class PengaduanMendesakViewModel (
                     userResponse = userRepository.showProfile(it.token)
                     println("Mau eksekusi 2")
                     getPengaduanMendesaks()
+                    getAllTeknisi()
                 } catch (e: Exception) {
                     Log.e(TAG, e.stackTraceToString())
                 }
@@ -79,6 +98,10 @@ class PengaduanMendesakViewModel (
 
     fun updateKeterangan(newKeterangan: String) {
         keterangan = newKeterangan
+    }
+
+    fun updateSelectedTeknisi(newTeknisi: UserWithRole){
+        selectedTeknisi = newTeknisi
     }
 
     suspend fun getPengaduanMendesaks() {
@@ -103,6 +126,28 @@ class PengaduanMendesakViewModel (
         _cards.emit(listPengaduanMendesak)
     }
 
+    suspend fun getAllTeknisi(){
+        try {
+            if (userState.isKoordinator) {
+                listUserWithRoleResponse = userRepository.getAllUser(userState.token)
+                _listUserWithRole.value = filterTeknisi(listUserWithRoleResponse.data)
+                _getAllTeknisiResult.value = PengaduanMendesakOperationResult.Success
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error: ${e.message}")
+            return
+        }
+    }
+
+    fun filterTeknisi(daftarUser: List<UserWithRole>): List<UserWithRole> {
+        return daftarUser.filter { user ->
+            user.roles.any { role ->
+                role.name == "ROLE_TEKNISI"
+            }
+        }
+    }
+
+
     suspend fun tolakPengaduan(pengaduan: Pengaduan) {
         val tolakPengaduan = ConfirmPengaduan(
             keputusan = "DITOLAK",
@@ -118,6 +163,25 @@ class PengaduanMendesakViewModel (
             } catch (e: Exception) {
                 Log.e(TAG, "Error: ${e.message}")
                 _setTolakStatusResult.value = PengaduanMendesakOperationResult.Error
+            }
+        }
+    }
+
+    suspend fun terimaPengaduan(pengaduan: Pengaduan){
+        val terimaPengaduan = ConfirmPengaduan(
+            keputusan = "DIKERJAKAN",
+            pengaduanId = pengaduan.pengaduanId,
+            emailTeknisi = selectedTeknisi.email,
+            keterangan = keterangan
+        )
+        Log.d(TAG, terimaPengaduan.toString())
+        viewModelScope.launch {
+            try {
+                pengaduan.pengaduanId?.let { pengaduanRepository.confirmPengaduan(userState.token, terimaPengaduan) }
+                _setTerimaStatusResult.value = PengaduanMendesakOperationResult.Success
+            } catch (e: Exception) {
+                Log.e(TAG, "Error: ${e.message}")
+                _setTerimaStatusResult.value = PengaduanMendesakOperationResult.Error
             }
         }
     }

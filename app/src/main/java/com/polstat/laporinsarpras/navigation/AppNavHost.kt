@@ -16,6 +16,7 @@ import com.polstat.laporinsarpras.ui.screen.PengaduanMendesakScreen
 import com.polstat.laporinsarpras.ui.screen.ProfilScreen
 import com.polstat.laporinsarpras.ui.viewmodel.LoginViewModel
 import com.polstat.laporinsarpras.ui.viewmodel.PengaduanMendesakViewModel
+import com.polstat.laporinsarpras.ui.viewmodel.ProfilViewModel
 
 @Composable
 fun AppNavHost() {
@@ -32,7 +33,12 @@ fun AppNavHost() {
         }
         composable("pengaduan") { PengaduanScreen(navController) }
         composable("aset") { AsetScreen(navController) }
-        composable("profil") { ProfilScreen(navController)}
+        composable("profil") {
+            ProfilScreen(
+                navController = navController,
+                viewModel = viewModel(factory = ProfilViewModel.Factory)
+            )
+        }
 //        composable("success") { LoginSuccessScreen(loginViewModel, navController) }
 //        composable("failed") { LoginFailedScreen(loginViewModel) }
     }
